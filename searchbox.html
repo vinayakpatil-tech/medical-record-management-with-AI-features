@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Search Box with AI Features</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f5;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        #search-box {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #search-box:focus {
+            border-color: #5f9ea0;
+            outline: none;
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.5);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #5f9ea0;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #4e8c7d;
+        }
+
+        #clear-btn {
+            background-color: #ff6347;
+        }
+
+        #clear-btn:hover {
+            background-color: #e55347;
+        }
+
+        .search-results {
+            margin-top: 20px;
+            width: 100%;
+            list-style: none;
+            padding: 0;
+        }
+
+        .search-results div {
+            padding: 12px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-results div:hover {
+            background-color: #f1f1f1;
+        }
+
+        #description {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            display: none;
+        }
+
+        #description h3 {
+            font-size: 20px;
+            color: #5f9ea0;
+            margin-bottom: 10px;
+        }
+
+        #description p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Search Box -->
+        <input type="text" id="search-box" placeholder="Search medical terms..." onkeyup="searchFunction()" autocomplete="off">
+        <div>
+            <button type="button" onclick="searchFunction()">Search</button>
+            <button type="button" id="clear-btn" onclick="clearSearch()">Clear</button>
+        </div>
+
+        <!-- Search Results -->
+        <div id="search-results" class="search-results"></div>
+
+        <!-- Description Box -->
+        <div id="description"></div>
+    </div>
+
+    <script>
+        const medicalTerms = [
+        { term: "Acetaminophen", description: "A common pain reliever and fever reducer." },
+            { term: "Asthma", description: "A chronic lung disease that inflames and narrows the airways." },
+            { term: "Cancer", description: "A disease in which abnormal cells divide without control." },
+            { term: "Diabetes", description: "A group of diseases that affect how your body uses blood sugar." },
+            { term: "Hypertension", description: "High blood pressure, a condition where the force of the blood against artery walls is too high." },
+            { term: "HIV/AIDS", description: "A virus that attacks the body's immune system, specifically the CD4 cells." },
+            { term: "Pneumonia", description: "An infection in one or both lungs that causes inflammation." },
+            { term: "Stroke", description: "A medical emergency where poor blood flow to the brain causes brain tissue damage." },
+            { term: "Heart Disease", description: "Conditions affecting the heart's ability to function, such as coronary artery disease." },
+            { term: "COVID-19", description: "An infectious disease caused by the SARS-CoV-2 virus, leading to respiratory issues." },
+            { term: "Alzheimer's Disease", description: "A progressive neurodegenerative disease that causes memory loss and cognitive decline." },
+            { term: "Parkinson's Disease", description: "A progressive neurological disorder that affects movement control." },
+            { term: "Chronic Obstructive Pulmonary Disease (COPD)", description: "A group of lung diseases that block airflow and make it difficult to breathe." },
+            { term: "Arthritis", description: "Inflammation of one or more joints, causing pain and stiffness." },
+            { term: "Osteoporosis", description: "A condition that weakens bones, making them fragile and more likely to break." },
+            { term: "Gastritis", description: "Inflammation of the stomach lining, causing nausea and abdominal discomfort." },
+            { term: "Cirrhosis", description: "Severe scarring of the liver, often due to chronic liver disease." },
+            { term: "Hepatitis", description: "Inflammation of the liver, often caused by viral infections." },
+            { term: "Anemia", description: "A condition where you lack enough healthy red blood cells to carry adequate oxygen to your tissues." },
+            { term: "Tuberculosis (TB)", description: "A bacterial infection that mainly affects the lungs, causing coughing and chest pain." },
+            { term: "Huntington's Disease", description: "A genetic disorder that causes the progressive breakdown of nerve cells in the brain." },
+            { term: "Multiple Sclerosis", description: "A disease of the central nervous system that affects the brain and spinal cord." },
+            { term: "Chlamydia", description: "A common sexually transmitted infection (STI) caused by bacteria." },
+            { term: "Gonorrhea", description: "A sexually transmitted infection caused by the Neisseria gonorrhoeae bacteria." },
+            { term: "Syphilis", description: "A sexually transmitted infection caused by the bacterium Treponema pallidum." },
+            { term: "Malaria", description: "A parasitic disease transmitted by mosquitoes, causing fever, chills, and flu-like symptoms." },
+            { term: "Tuberculosis (TB)", description: "A bacterial infection that primarily affects the lungs, causing persistent cough and weight loss." },
+            { term: "Epilepsy", description: "A neurological disorder characterized by recurrent, unprovoked seizures." },
+            { term: "Fibromyalgia", description: "A condition characterized by widespread muscle pain and tenderness." },
+            { term: "Celiac Disease", description: "An autoimmune disorder in which ingestion of gluten damages the small intestine lining." },
+            { term: "Psoriasis", description: "An autoimmune condition that causes rapid skin cell turnover, leading to scaly patches on the skin." },
+            { term: "Eczema", description: "A condition that makes the skin red, inflamed, and itchy, also known as atopic dermatitis." },
+            { term: "Dermatitis", description: "Inflammation of the skin, leading to redness, swelling, and itching." },
+            { term: "Osteoarthritis", description: "A type of arthritis caused by the breakdown of cartilage in joints." },
+            { term: "Rheumatoid Arthritis", description: "An autoimmune disease that causes inflammation in the joints, leading to pain and stiffness." },
+            { term: "Thyroid Disorder", description: "Conditions affecting the thyroid gland, which regulates metabolism." },
+            { term: "Hypothyroidism", description: "A condition in which the thyroid gland doesn't produce enough thyroid hormones." },
+            { term: "Hyperthyroidism", description: "A condition in which the thyroid gland produces too much thyroid hormone." },
+            { term: "Goiter", description: "An abnormal enlargement of the thyroid gland, often caused by iodine deficiency." },
+            { term: "Lung Cancer", description: "Cancer that begins in the lungs and can spread to other parts of the body." },
+            { term: "Breast Cancer", description: "Cancer that forms in the cells of the breast, common in women." },
+            { term: "Prostate Cancer", description: "Cancer that develops in the prostate gland, affecting men." },
+            { term: "Leukemia", description: "A type of cancer that affects the blood and bone marrow." },
+            { term: "Lymphoma", description: "Cancer that starts in the lymphatic system, part of the body's immune system." },
+            { term: "Colon Cancer", description: "Cancer of the colon or rectum, often beginning as a polyp." },
+            { term: "Kidney Disease", description: "Any disease that affects the kidneys, impairing their function." },
+            { term: "Dialysis", description: "A treatment that filters and purifies the blood when the kidneys can no longer do so." },
+            { term: "Glaucoma", description: "A group of eye conditions that damage the optic nerve, leading to vision loss." },
+            { term: "Cataracts", description: "Clouding of the lens in the eye, leading to vision impairment." },
+            { term: "Conjunctivitis", description: "Inflammation of the conjunctiva, often called pink eye." },
+            { term: "Migraine", description: "A type of severe headache often accompanied by nausea, vomiting, and sensitivity to light." },
+            { term: "Tinnitus", description: "The perception of ringing, buzzing, or other sounds in the ears without an external source." },
+            { term: "Vertigo", description: "A sensation of spinning or dizziness, often caused by inner ear issues." },
+            { term: "Hearing Loss", description: "Partial or total inability to hear sounds." },
+            { term: "Deafness", description: "The inability to hear, either partially or completely." },
+            { term: "Sleep Apnea", description: "A sleep disorder where breathing repeatedly stops and starts during sleep." },
+            { term: "Insomnia", description: "A condition characterized by difficulty falling asleep or staying asleep." },
+            { term: "Narcolepsy", description: "A sleep disorder that causes excessive daytime sleepiness and sudden sleep attacks." },
+            { term: "Sleepwalking", description: "A behavior disorder that involves walking or performing activities while asleep." },
+            { term: "Obesity", description: "A condition characterized by excessive body fat that increases the risk of health problems." },
+            { term: "Anorexia", description: "An eating disorder characterized by an intense fear of gaining weight and a distorted body image." },
+            { term: "Bulimia", description: "An eating disorder marked by binge eating followed by purging to avoid weight gain." },
+            { term: "Chronic Fatigue Syndrome", description: "A condition characterized by extreme fatigue that doesn’t improve with rest." },
+            { term: "Addison's Disease", description: "A disorder in which the adrenal glands do not produce enough hormones." },
+            { term: "Cushing's Syndrome", description: "A condition caused by prolonged exposure to high levels of cortisol." },
+            { term: "Sickle Cell Anemia", description: "A genetic disorder in which red blood cells are shaped abnormally, causing blockages in blood flow." },
+            { term: "Hemophilia", description: "A genetic disorder in which the blood does not clot properly." },
+            { term: "Epstein-Barr Virus", description: "A virus that causes infectious mononucleosis (mono), also known as the kissing disease." },
+            { term: "Shingles", description: "A viral infection that causes a painful rash, typically affecting older adults." },
+            { term: "Chickenpox", description: "A highly contagious viral infection that causes an itchy skin rash." },
+            { term: "Herpes Simplex Virus", description: "A virus that causes sores on the skin, often around the mouth or genitals." },
+            { term: "Mononucleosis", description: "A viral infection commonly caused by the Epstein-Barr virus, characterized by fever and swollen lymph nodes." },
+            { term: "Dengue Fever", description: "A viral illness transmitted by mosquitoes, causing fever, rash, and muscle pain." },
+            { term: "Zika Virus", description: "A virus transmitted by mosquitoes that can cause birth defects if contracted during pregnancy." },
+            { term: "Malaria", description: "A serious infectious disease caused by parasites transmitted through mosquito bites." },
+            { term: "Cystic Fibrosis", description: "A genetic disorder that causes severe damage to the lungs, digestive system, and other organs." },
+            { term: "Tuberculosis (TB)", description: "A bacterial infection that primarily affects the lungs, causing persistent cough, weight loss, and night sweats." },
+            { term: "Chronic Kidney Disease", description: "A long-term condition where the kidneys gradually lose function over time." },
+            { term: "Glomerulonephritis", description: "Inflammation of the kidney's filtering units (glomeruli), often leading to kidney damage." },
+            { term: "Chronic Sinusitis", description: "Long-lasting inflammation of the sinuses, leading to nasal congestion, facial pain, and headaches." },
+            { term: "Scleroderma", description: "A group of autoimmune diseases that cause hardening and tightening of the skin and connective tissues." },
+            { term: "Lupus", description: "An autoimmune disease where the immune system attacks healthy tissues, causing inflammation and damage to joints, skin, kidneys, and other organs." },
+            { term: "Chronic Migraine", description: "A type of migraine that occurs on 15 or more days a month for at least three months." },
+            { term: "Acromegaly", description: "A hormonal disorder that results from excess growth hormone, leading to abnormal growth of bones and tissues." },
+            { term: "Gastroparesis", description: "A condition in which the stomach cannot empty itself of food in a normal fashion, leading to nausea, vomiting, and bloating." },
+            { term: "Tinnitus", description: "A ringing, buzzing, or hissing sound in the ears, often occurring without an external source of sound." },
+            { term: "Atrial Fibrillation", description: "An irregular and often rapid heart rate that can increase the risk of stroke and other heart-related complications." },
+            { term: "Bipolar Disorder", description: "A mental health condition characterized by extreme mood swings that include emotional highs (mania or hypomania) and lows (depression)." },
+            { term: "Schizophrenia", description: "A severe mental disorder that affects how a person thinks, feels, and behaves, leading to distorted reality and hallucinations." },
+            { term: "Anxiety Disorder", description: "A group of mental health disorders characterized by excessive fear, anxiety, and worry." },
+            { term: "Post-Traumatic Stress Disorder (PTSD)", description: "A mental health condition triggered by a terrifying event, causing flashbacks, nightmares, and severe anxiety." },
+            { term: "Obsessive-Compulsive Disorder (OCD)", description: "A mental disorder characterized by uncontrollable, recurring thoughts (obsessions) and behaviors (compulsions)." },
+            { term: "Attention Deficit Hyperactivity Disorder (ADHD)", description: "A neurodevelopmental disorder characterized by inattention, hyperactivity, and impulsiveness." },
+            { term: "Bacterial Meningitis", description: "A bacterial infection that causes inflammation of the protective membranes covering the brain and spinal cord." },
+            { term: "Hepatitis B", description: "A viral infection that attacks the liver and can cause both acute and chronic diseases." },
+            { term: "Hepatitis C", description: "A liver infection caused by the hepatitis C virus (HCV) that can lead to chronic liver disease and cirrhosis." },
+            { term: "Gout", description: "A type of arthritis characterized by sudden, severe pain, redness, and swelling in the joints, often the big toe." },
+            { term: "Acid Reflux", description: "A condition where stomach acid frequently flows back into the esophagus, causing heartburn and discomfort." },
+            { term: "Irritable Bowel Syndrome (IBS)", description: "A common digestive disorder that causes abdominal pain, bloating, and changes in bowel movements." },
+            { term: "Diverticulitis", description: "Inflammation or infection of small pouches (diverticula) that can form in the walls of the intestines." },
+            { term: "Gallstones", description: "Solid particles that form in the gallbladder and can block bile ducts, causing pain and digestive issues." },
+            { term: "Cholestasis", description: "A condition in which bile flow from the liver is reduced or stopped, leading to jaundice and itching." },
+            { term: "Liver Cirrhosis", description: "Severe scarring of the liver due to long-term damage, leading to impaired liver function." },
+            { term: "Hemorrhoids", description: "Swollen blood vessels in the rectum or anus that cause pain, itching, and bleeding." },
+            { term: "Hirsutism", description: "Excessive hair growth in women in areas where men typically grow hair, such as the face and chest." },
+            { term: "Polycystic Ovary Syndrome (PCOS)", description: "A hormonal disorder common among women of reproductive age, characterized by irregular periods, excessive hair growth, and cysts on the ovaries." },
+            { term: "Endometriosis", description: "A disorder in which tissue similar to the lining of the uterus grows outside the uterus, causing pain and infertility." },
+            { term: "Uterine Fibroids", description: "Noncancerous growths of the uterus that can cause heavy bleeding, pelvic pain, and other symptoms." },
+            { term: "Erectile Dysfunction", description: "The inability to get or maintain an erection sufficient for sexual intercourse." },
+            { term: "Ovarian Cancer", description: "Cancer that begins in the ovaries and can spread to other parts of the body." },
+            { term: "Testicular Cancer", description: "Cancer that develops in the testicles, often affecting younger men." },
+            { term: "Cervical Cancer", description: "Cancer that starts in the cervix, often caused by the human papillomavirus (HPV)." },
+            { term: "Osteomyelitis", description: "An infection in the bone, often caused by bacteria, leading to pain, swelling, and sometimes fever." },
+            { term: "Sepsis", description: "A life-threatening response to infection that can lead to widespread inflammation and organ failure." },
+            { term: "Gallbladder Disease", description: "Conditions affecting the gallbladder, including inflammation, stones, and infection." },
+            { term: "Rickets", description: "A condition in children caused by a vitamin D deficiency, leading to weakened bones and growth problems." },
+            { term: "Vitamin B12 Deficiency", description: "A condition where a lack of vitamin B12 causes nerve damage, anemia, and fatigue." },
+            { term: "Celiac Disease", description: "An autoimmune disorder where the ingestion of gluten damages the small intestine lining, leading to malabsorption of nutrients." },
+            { term: "Panic Disorder", description: "A mental health disorder characterized by sudden, intense bouts of fear or anxiety known as panic attacks." },
+            { term: "Tay-Sachs Disease", description: "A genetic disorder that causes the progressive destruction of nerve cells in the brain and spinal cord, typically affecting infants." },
+            { term: "Narcolepsy", description: "A sleep disorder characterized by excessive daytime sleepiness and sudden, uncontrollable episodes of falling asleep." },
+            { term: "Liver Failure", description: "A condition in which the liver loses its ability to perform its functions, often due to diseases such as cirrhosis or hepatitis." },
+            { term: "Marfan Syndrome", description: "A genetic disorder that affects the connective tissue, leading to features like long limbs, heart problems, and eye issues." },
+            { term: "Anorexia Nervosa", description: "An eating disorder characterized by an intense fear of gaining weight and an extreme restriction of food intake." },
+            { term: "Bulimia Nervosa", description: "An eating disorder characterized by episodes of binge eating followed by compensatory behaviors like vomiting or excessive exercise." },
+            { term: "Hyperhidrosis", description: "A condition characterized by excessive sweating, typically in the hands, feet, underarms, or face." },
+            { term: "Ehlers-Danlos Syndrome", description: "A group of connective tissue disorders that result in hyper-elastic skin, joint hypermobility, and fragile tissues." },
+            { term: "Pernicious Anemia", description: "A type of anemia caused by the inability to absorb vitamin B12 due to a lack of intrinsic factor." },
+            { term: "Sickle Cell Disease", description: "A genetic blood disorder where red blood cells become abnormally shaped and cause blockages in blood flow." },
+            { term: "Pneumothorax", description: "A collapsed lung that occurs when air leaks into the space between the lung and the chest wall." },
+            { term: "Meniere's Disease", description: "A disorder of the inner ear that causes vertigo, ringing in the ears (tinnitus), and hearing loss." },
+            { term: "Albinism", description: "A genetic condition characterized by a lack of pigment (melanin) in the skin, hair, and eyes, leading to sensitivity to the sun." },
+            { term: "Hodgkin's Lymphoma", description: "A type of cancer that originates in the lymphatic system, characterized by the presence of Reed-Sternberg cells." },
+            { term: "Non-Hodgkin's Lymphoma", description: "A diverse group of blood cancers that affect the lymphatic system, often presenting with swollen lymph nodes and other symptoms." },
+            { term: "Kawasaki Disease", description: "A rare childhood illness that causes inflammation in the blood vessels, particularly affecting the coronary arteries." },
+            { term: "Chikungunya", description: "A viral disease transmitted by mosquitoes that causes fever, joint pain, and rash." },
+            { term: "Bartonella Infection", description: "A bacterial infection that can cause a variety of symptoms, including fever, swollen lymph nodes, and rashes. It is transmitted by fleas or lice." },
+            { term: "Chronic Fatigue Syndrome", description: "A condition characterized by persistent, unexplained fatigue that does not improve with rest and is often accompanied by sleep disturbances and cognitive impairments." },
+            { term: "Cushing's Disease", description: "A condition caused by excess cortisol in the body, often due to a pituitary tumor that produces too much adrenocorticotropic hormone (ACTH)." },
+            { term: "Addison's Disease", description: "A disorder in which the adrenal glands do not produce enough hormones, leading to symptoms like fatigue, weight loss, and low blood pressure." },
+            { term: "Pica", description: "An eating disorder characterized by the compulsion to eat non-food substances such as dirt, clay, or chalk." },
+            { term: "Acid Reflux Disease (GERD)", description: "A chronic condition in which stomach acid or bile irritates the food pipe (esophagus), causing heartburn and discomfort." },
+            { term: "Poliomyelitis (Polio)", description: "A viral infection that can lead to paralysis, muscle weakness, and in severe cases, death." },
+            { term: "Chronic Obstructive Pulmonary Disease (COPD)", description: "A group of lung diseases that block airflow and make it difficult to breathe, often due to smoking or environmental factors." },
+            { term: "Bacterial Vaginosis", description: "An imbalance of the normal bacteria in the vagina, leading to symptoms like discharge, odor, and irritation." },
+            { term: "Mumps", description: "A viral infection that primarily affects the parotid glands, causing swelling in the neck and fever." },
+            { term: "Measles", description: "A highly contagious viral infection characterized by a red, blotchy skin rash, high fever, and respiratory symptoms." },
+            { term: "Rubella", description: "A contagious viral infection that causes a red rash and mild fever, and can cause birth defects if contracted during pregnancy." },
+            { term: "Hantavirus", description: "A virus transmitted by rodents that can cause severe respiratory distress and kidney failure in humans." },
+            { term: "Rabies", description: "A viral disease that affects the brain and nervous system, typically transmitted through the bite of an infected animal." },
+            { term: "Sodium Imbalance", description: "An electrolyte imbalance where either too much or too little sodium is present in the blood, affecting fluid balance and nerve function." },
+            { term: "Acidity", description: "Also known as stomach acid neutralizers, neutralize the stomach acid to provide quick relief from acidity. ." },
+            { term: "Amyotrophic Lateral Sclerosis (ALS)", description: "A progressive neurological disease that affects nerve cells in the brain and spinal cord, leading to muscle weakness and atrophy." },
+            { term: "Mastitis", description: "An infection of the breast tissue that results in breast pain, swelling, redness, and sometimes fever." },
+            { term: "Bursitis", description: "Inflammation of the bursae, which are small, fluid-filled sacs that cushion the bones, tendons, and muscles near the joints." },
+            { term: "Gingivitis", description: "A common and mild form of gum disease (periodontal disease) that causes irritation, redness, and swelling of your gingiva (gums)." },
+            { term: "Cervical Dystonia", description: "A neurological condition that causes the muscles in the neck to contract uncontrollably, leading to abnormal head postures." },
+            { term: "Glomerulonephritis", description: "A group of diseases that cause inflammation of the glomeruli, the tiny filtering units in the kidneys." },
+            { term: "Trigeminal Neuralgia", description: "A chronic pain condition affecting the trigeminal nerve in the face, causing sudden, severe facial pain." },
+            { term: "Tropical Sprue", description: "A malabsorption disorder found in tropical regions, leading to chronic diarrhea, weight loss, and deficiencies in vitamins and minerals." },
+            { term: "Achalasia", description: "A rare disorder of the esophagus where the muscles fail to relax, making it difficult for food and liquid to pass into the stomach." },
+            { term: "Polymyalgia Rheumatica", description: "An inflammatory disorder that causes muscle pain and stiffness, particularly in the shoulders and hips." },
+            { term: "Mast Cell Activation Syndrome (MCAS)", description: "A disorder where mast cells release excessive amounts of mediators like histamine, leading to allergic-like reactions in the body." },
+            { term: "Hemochromatosis", description: "An inherited disorder where excess iron builds up in the body, leading to organ damage." },
+            { term: "Neurofibromatosis", description: "A genetic disorder that causes tumors to form on nerve tissue, which can lead to skin changes and neurological issues." },
+            { term: "Charcot-Marie-Tooth Disease", description: "A group of inherited disorders that affect the peripheral nerves, leading to muscle weakness and atrophy." },
+            { term: "Erysipelas", description: "A bacterial skin infection that causes red, swollen, and painful patches of skin, often on the legs or face." },
+            { term: "Lichen Planus", description: "An inflammatory condition that causes purplish, itchy, flat bumps to appear on the skin or mucous membranes." },
+            { term: "Restless Legs Syndrome", description: "A neurological condition that causes an irresistible urge to move the legs, often accompanied by uncomfortable sensations, especially at night." },
+            { term: "Tinea Versicolor", description: "A fungal infection that causes small, discolored patches of skin, typically on the back, chest, or shoulders." },
+            { term: "Meningococcal Disease", description: "A serious bacterial infection caused by Neisseria meningitidis, leading to meningitis and bloodstream infections, often with rapid onset." },
+            { term: "Peptic Ulcer Disease", description: "Sores that develop on the inner lining of the stomach, small intestine, or esophagus, usually due to an infection with Helicobacter pylori bacteria." },
+            { term: "Cushing's Syndrome", description: "A hormonal disorder caused by prolonged exposure to high levels of cortisol, often resulting from the use of corticosteroid medications or tumors." },
+            { term: "Acid-Base Imbalance", description: "A condition where the body's pH levels are too high (alkalosis) or too low (acidosis), affecting the function of enzymes and cellular processes." },
+            { term: "Myasthenia Gravis", description: "A chronic autoimmune neuromuscular disease characterized by weakness in the voluntary muscles due to a failure of nerve impulses." },
+            { term: "Tinnitus", description: "A condition where the patient perceives ringing, buzzing, or other noises in the ears, often without an external source." },
+            { term: "Whipple's Disease", description: "A rare bacterial infection that affects the small intestine and can lead to malabsorption, weight loss, and joint pain." },
+            { term: "Sjögren's Syndrome", description: "An autoimmune disorder that primarily affects the moisture-producing glands, causing dry mouth, dry eyes, and joint pain." },
+            { term: "Pneumoconiosis", description: "A group of lung diseases caused by the inhalation of dust, often from work-related exposure to materials like coal dust (black lung disease) or asbestos." },
+            { term: "Toxic Shock Syndrome", description: "A rare but potentially fatal condition caused by bacterial toxins that result in fever, rash, and organ dysfunction, often linked to tampon use or surgical wounds." },
+            { term: "Irritable Bowel Disease (IBD)", description: "A group of intestinal disorders, including Crohn’s disease and ulcerative colitis, that cause chronic inflammation of the digestive tract." },
+            { term: "Ectopic Pregnancy", description: "A pregnancy that occurs outside the uterus, most commonly in the fallopian tube, and is a life-threatening medical emergency." },
+            { term: "Spina Bifida", description: "A birth defect that occurs when the spinal cord and vertebrae do not develop properly, often leading to paralysis and other disabilities." },
+            { term: "Croup", description: "A viral infection of the upper airways, commonly affecting young children, leading to a distinctive barking cough and difficulty breathing." },
+            { term: "Rheumatic Fever", description: "A serious inflammatory disease that can develop after a throat infection caused by Streptococcus bacteria, leading to heart, joint, and skin issues." },
+            { term: "Pemphigus Vulgaris", description: "An autoimmune disorder that causes blistering of the skin and mucous membranes, particularly in the mouth and throat." },
+            { term: "Hemorrhagic Stroke", description: "A type of stroke that occurs when a blood vessel in the brain bursts, causing bleeding and pressure on brain tissues." },
+            { term: "Mastocytosis", description: "A condition in which there is an abnormal accumulation of mast cells in the skin and/or internal organs, leading to symptoms such as itching, rashes, and anaphylaxis." },
+            { term: "Lung Fibrosis", description: "A condition where lung tissue becomes scarred and stiff, impairing breathing and oxygen exchange." },
+            { term: "Biliary Atresia", description: "A rare liver disease in infants where the bile ducts are blocked or absent, leading to liver damage and jaundice." },
+            { term: "Multiple Myeloma", description: "A cancer of plasma cells, a type of white blood cell, that leads to abnormal growth of these cells in the bone marrow, causing bone pain and organ damage." },
+            { term: "Hepatic Encephalopathy", description: "A decline in brain function due to liver disease, often resulting in confusion, altered consciousness, and neurological dysfunction." },
+            { term: "Influenza (Flu)", description: "A contagious respiratory illness caused by influenza viruses, causing fever, cough, and muscle aches." }
+    // Add more terms here
+];
+
+        // Function to handle search input
+        function searchFunction() {
+            const query = document.getElementById("search-box").value.trim();
+            if (query.length > 0) {
+                const suggestions = medicalTerms.filter(item =>
+                    item.term.toLowerCase().includes(query.toLowerCase())
+                );
+                displaySuggestions(suggestions);
+            } else {
+                clearSearch();
+            }
+        }
+
+        // Display search suggestions
+        function displaySuggestions(suggestions) {
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const div = document.createElement('div');
+                div.textContent = suggestion.term;
+                div.onclick = () => displayDescription(suggestion);
+                resultsContainer.appendChild(div);
+            });
+        }
+
+        // Display description of selected term
+        function displayDescription(suggestion) {
+            const descriptionContainer = document.getElementById('description');
+            descriptionContainer.innerHTML = `<h3>${suggestion.term}</h3><p>${suggestion.description}</p>`;
+            descriptionContainer.style.display = 'block';
+        }
+
+        // Clear search input and results
+        function clearSearch() {
+            document.getElementById("search-box").value = '';
+            document.getElementById("search-results").innerHTML = '';
+            document.getElementById("description").style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

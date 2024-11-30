@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Risk Analyzer</title>
+    <style>body{background-color: lightgrey;}</style>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Health Risk Analyzer</h1>
+        <p>Enter your details below to check your health status.</p>
+        <form id="health-form">
+            <div class="input-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <div class="input-group">
+                <label for="bloodSugar">Blood Sugar Level (mg/dL):</label>
+                <input type="number" id="bloodSugar" name="bloodSugar" required>
+            </div>
+            <div class="input-group">
+                <label for="bmi">BMI:</label>
+                <input type="number" id="bmi" name="bmi" step="0.1" required>
+            </div>
+            <div class="input-group">
+                <label for="bloodPressure">Blood Pressure (mmHg):</label>
+                <input type="text" id="bloodPressure" name="bloodPressure" placeholder="e.g., 120/80" required>
+            </div>
+
+            <button type="submit">Analyze Health</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

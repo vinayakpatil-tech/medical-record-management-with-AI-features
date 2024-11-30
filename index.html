@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplified Medical Record Management System</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background:honeydew;
+        }
+        .logo {
+    max-width: 150px;
+    height: auto;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    opacity: 0; /* Initially hidden */
+    animation: fadeIn 2s ease-in-out forwards; /* Fade-in effect */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5); /* Slightly smaller for a zoom effect */
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1); /* Return to original size */
+    }
+}
+.search{
+    text-decoration: none;
+     padding: 30px; 
+     border-radius: 20px;
+     margin-right: 50px;
+}
+header {
+            background: linear-gradient(to right, #007BFF, #6c5ce7);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            border-radius: 30px;
+            width: 95%;
+            margin: 15px auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        header .logo {
+            max-width: 150px;
+            height: auto;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .container img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff6f61, #ff9966);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: #fdcb6e;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+            animation: ripple 2s infinite;
+        }
+
+        .feature-section {
+            text-align: left;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f4f4f4;
+            color: #333;
+        }
+        footer img {
+            max-width: 400px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        /* Slow Blinking Animation with Color Change */
+        @keyframes slowBlink {
+            0% { color: red; }
+            50% { color: white; }
+            100% { color: black; }
+        }
+        h1 {
+            animation: slowBlink 3s infinite; /* Slow blinking every 3 seconds */
+        }
+
+        /* Heart CSS */
+        .heart {
+            position: absolute;
+            top: 60px; /* Adjust for positioning */
+            right: 50px; /* Adjust for positioning */
+            width: 50px; /* Adjust size */
+            height: 50px;
+            background-color: red;
+            transform: rotate(-45deg);
+            animation: heartbeat 1s infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 50px; /* Match heart size */
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: 25px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1) rotate(-45deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(-45deg);
+            }
+        }
+        .doctor{
+            text-align: center;
+            background-color: aquamarine;
+            border-radius: 20px;
+            padding:20px ;
+            width: 93.9%;
+            margin-left: 20px;
+        }
+        .dlog{
+            color:rgb(142, 6, 6);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2 style="position:relative; right:550px;margin-left: 18px;">Home Page</h2>
+        <div class="heart"></div> <!-- Heart added here -->
+        <img class="logo" src="images/logo.jpg" alt="Logo">
+        <h1>Simplified Medical Record Management System</h1>
+        <a href="searchbox.html" class="btn" style="border-radius: 10px;">Search terms</a>
+        <a href="ai record/index.html" class="btn" style="border-radius: 10px;"> Check Your health status</a>
+        <p>Making healthcare simple, secure, and accessible</p>
+    </header>
+
+    <div class="container" style="background-color:beige;">
+        <img src="images/care.jpg" alt="Healthcare Image">
+        <h2 style="color:green;">Welcome to SMRMS</h2>
+        <p style="color:lightbrown;">
+            Our platform helps patients securely store, manage, and share their medical records with ease. 
+            Whether it's managing prescriptions, diagnoses, or uploading medical documents, we've got you covered.
+        </p>
+        <div class="feature-section" style="background-color:azure;">
+            <h3>Why Choose SMRMS?</h3>
+            <p><strong>Data Security You Can Trust:</strong> We understand the importance of your medical records. Our platform uses advanced encryption and complies with all relevant data protection regulations to ensure your information remains private and secure.</p>
+            <p><strong>User-Friendly Design:</strong> SMRMS is built for patients of all ages and technological abilities. Our intuitive layout ensures that anyone can navigate the platform effortlessly.</p>
+            <p><strong>Comprehensive Record Management:</strong> Upload, organize, and manage your medical history, prescriptions, diagnoses, and reports in one place.</p>
+            <p><strong>Seamless Record Sharing:</strong> Share your medical data with doctors securely, with customizable access controls to maintain your privacy.</p>
+        </div>
+
+        <div>
+            <h3 style="color: chocolate;">Patients Login And Register</h3>
+            <a href="login.php" class="btn">Login</a>
+            <a href="register.php" class="btn">Register</a>
+        </div>
+        <div>
+            <a href="help.php" style="margin-right:10px;">Need Help??</a>
+            
+        </div>
+    </div>
+    <div class="doctor">
+        <h3 class="dlog">Doctors Login And Register</h3>
+        <a href="doctor_login.php" class="btn" style="border-radius: 10px;">Login</a>
+        <a href="doctor_register.php" class="btn" style="border-radius: 10px;">Register</a>
+        
+    </div>
+
+    <footer>
+        <img src="images/footer.jpg" alt="Footer Decorative Image">
+        <p>&copy; 2024 Simplified Medical Record Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
